@@ -1,9 +1,9 @@
 #! /usr/bin/env perl
 #################################################################################
 #     File Name           :     managewrt.pl
-#     Created By          :     wirerydr
+#     Created By          :     jnikolic
 #     Creation Date       :     2015-02-18 10:25
-#     Last Modified       :     2015-03-05 10:37
+#     Last Modified       :     2015-03-08 16:36
 #     Description         :     Manage 
 #     Description         :     Manages the NVRAM settings on a router running
 #                         :     a "WRT" style of firmware such as DD-WRT.
@@ -302,6 +302,51 @@ sub LoadList
 }
 
 
+### MakeTmpfileRemote()
+###
+### Given the name/IP of a remote device, creates a tempfile on that device and
+### returns the path/filename of that tempfile.
+###
+### Since 'mktemp' appears to be rarely (if ever) present on current dd-wrt
+### builds, the local system's mktemp is used in dry-run mode to create a
+### filename.  That filename is then created on the remote device.
+###
+### Args:	$_[0]	= Name/IP of remote device
+###
+### Return:	0		= Failure
+###			non-0	= Name of temp file created on remote device
+###
+sub MakeTmpfileRemote
+{
+	DebugSay( "Entered " . (caller(0))[3] . " [ @_ ]" );
+
+	my $router		= $_[0];
+
+	my $template	= "managewrt_\$(date '+%Y%m%d%H%M%S').XXXXX";
+	my $tempname;
+	my $cmdbuffer;
+	my $cmdoutput;
+	my $resultcode;
+
+	$cmdbuffer = "mktemp --dry-run --tmpdir=/tmp $template";
+	if( ! ExecuteShellCmd( $cmdbuffer, \$tempname, \$resultcode ) )
+	{
+		warn "Error running local 'mktemp'\nresult $resultcode";
+		return 0;
+	}
+	chomp $tempname;
+
+	$cmdbuffer = "ssh root\@$router -q \'>$tempname'";
+	if( ! ExecuteShellCmd( $cmdbuffer, \$cmdoutput, \$resultcode ) )
+	{
+		warn "Error creating tmpfile '$tempname' on router '$router'\nresult $resultcode";
+		return 0;
+	}
+
+	return $tempname;
+}
+
+
 ### OutputSettings()
 ###
 ### Takes a hash reference containing nvram setting names/values, and outputs
@@ -342,6 +387,38 @@ sub OutputSettings
 	$filehandle->flush();
 
 	return 1;
+}
+
+
+### PrependLiterals()
+###
+### Given a reference to a string, prepends every instance of certain literal
+### characters with a backslash \ character.  The referenced string itself will
+### be updated to reflect processing.  The characters that will be
+### prepended are:
+###     			\  (backslash)
+###     			"  (double quote)
+###     			$  (dollar-sign)
+###     			`  (backtick)
+### 	
+### Args:	$_[0]]	= Reference to the string to be processed.
+###
+### Return:	Value of the processed reference
+###
+### Exits:	none
+###
+sub PrependLiterals
+{
+	DebugSay( "Entered " . (caller(0))[3] . " [ @_ ]" );
+
+	my $stringref = $_[0];
+
+	$$stringref =~ s/\\/\\\\/g;	# Treat \ characters as literals - MUST BE 1ST
+	$$stringref =~ s/\"/\\\"/g;	# Treat " characters as literals
+	$$stringref =~ s/\$/\\\$/g;	# Treat $ characters as literals
+	$$stringref =~ s/\`/\\\`/g;	# Treat ` characters as literals
+
+	return "$$stringref"
 }
 
 
@@ -419,6 +496,9 @@ sub PushSettingsToRouter
 
 	my $cmdbuffer = "#!/bin/sh\n";
 
+	my $tmpfilename = MakeTmpfileRemote( $router );
+	exit 255 unless $tmpfilename;
+
 	foreach my $settingname ( keys $settinglist )
 	{
 		# Build command and execute it, capturing output and result-code.
@@ -429,68 +509,25 @@ sub PushSettingsToRouter
 		# Some extra backslash'ing is required for this special case because
 		# the constructed command needs to survive command-substitution several
 		# times, on the system running this script and on the router itself.
-		for( my $count = 1; $i <= 2; $i++ )
+		for( my $count = 1; $count <= 2; $count++ )
 		{
 			$settingvalue =~ s/\$/\\\$/g; # Prepend dollarsign $ characters with backslash \
 			$settingvalue =~ s/\`/\\\`/g; # Prepend backtick   ` characters with backslash \
 		}
 
 		$cmdbuffer .= "nvram set $settingname=\"$settingvalue\"\n";
-		#my $sshcmd = "ssh -l root -q $CFG{'router'} \'nvram set $settingname=\"$settingvalue\"\'";
-		#DebugSay( "nvram set sshcmd = [$sshcmd]" );
-		#my( $cmdoutput, $resultcode );
-		#ExecuteShellCmd( $sshcmd, \$cmdoutput, \$resultcode )
-			#or die "Error when running ssh on router $CFG{'router'} (result=$resultcode) $!";
 	}
 
 	$cmdbuffer .= "nvram commit";
-	#my $sshcmd = "ssh -l root -q $CFG{'router'} \'nvram commit'";
-	#DebugSay( "nvram commit sshcmd = [$sshcmd]" );
-	#my( $cmdoutput, $resultcode );
-	#ExecuteShellCmd( $sshcmd, \$cmdoutput, \$resultcode )
-		#or die "Error when running ssh on router $CFG{'router'} (result=$resultcode) $!";
 
 	DebugSay( "[[[[[$cmdbuffer]]]]]" );
-	#my $sshcmd = "cat <<-ENDcat\n$cmdbuffer\nENDcat\n | ssh root\@$router -q \'cat >/tmp/jimtest.blah\'";
-	my $sshcmd = "cat <<-ENDcat | ssh root\@$router -q \'cat >/tmp/jimtest.blah\'\n$cmdbuffer\nENDcat\n";
+	my $sshcmd = "cat <<-ENDcat | ssh root\@$router -q \'cat >$tmpfilename\'\n$cmdbuffer\nENDcat\n";
 	DebugSay( "**********$sshcmd**********" );
 	my( $cmdoutput, $resultcode );
 	ExecuteShellCmd( $sshcmd, \$cmdoutput, \$resultcode )
 		or die "Error when running ssh on router $CFG{'router'} (result=$resultcode) $!";
 
 	return 1;
-}
-
-
-### PrependLiterals()
-###
-### Given a reference to a string, prepends every instance of certain literal
-### characters with a backslash \ character.  The referenced string itself will
-### be updated to reflect processing.  The characters that will be
-### prepended are:
-###     			\  (backslash)
-###     			"  (double quote)
-###     			$  (dollar-sign)
-###     			`  (backtick)
-### 	
-### Args:	$_[0]]	= Reference to the string to be processed.
-###
-### Return:	Value of the processed reference
-###
-### Exits:	none
-###
-sub PrependLiterals
-{
-	DebugSay( "Entered " . (caller(0))[3] . " [ @_ ]" );
-
-	my $stringref = $_[0];
-
-	$$stringref =~ s/\\/\\\\/g;	# Treat \ characters as literals - MUST BE 1ST
-	$$stringref =~ s/\"/\\\"/g;	# Treat " characters as literals
-	$$stringref =~ s/\$/\\\$/g;	# Treat $ characters as literals
-	$$stringref =~ s/\`/\\\`/g;	# Treat ` characters as literals
-
-	return "$$stringref"
 }
 
 
@@ -622,6 +659,12 @@ sub SetupConfig
 			$TMPCFG{'cmd'} = $cmd;
 			shift @ARGV;
 		}
+		else
+		{
+			$TMPCFG{'cmd'} = "invalid";
+			shift @ARGV;
+		}
+
 	}
 
 	# Read command-line options into temporary config hash.
@@ -659,11 +702,11 @@ sub SetupConfig
 			next if $key eq 'help';			# skip if setting requests help
 			next if $key eq 'configfile';	# skip if setting redundantly specifies a config file
 			$TMPCFG{$key} = $value;
-			#say( "Got config setting from \'$cfgfilename\': $key=$TMPCFG{$key}" );
 		}
 	}
 
-	# Exit if any mandatory arguments were omitted
+	# Exit if command or any mandatory arguments were omitted
+	pod2usage( "$0: Must specify a valid command as 1st option.\n" ) if( $TMPCFG{'cmd'} eq "invalid" );
 	pod2usage( "$0: Must specify a valid command as 1st option.\n" ) unless defined $TMPCFG{'cmd'};
 	pod2usage( "$0: Must specify a listname.\n" )          			 unless defined $TMPCFG{'listname'};
 	pod2usage( "$0: Must specify a router.\n" )            			 unless defined $TMPCFG{'router'};
@@ -792,6 +835,7 @@ __END__
            save-file, the file's permissions will be set to 0600 ( -rw------- )
            to prevent access by any user other than the owner and root.
 
+           (NOT YET IMPLEMENTED)
         2. When accessing a list config-file or a setting save-file, execution
            will terminate if the file has any non-owner permissions enabled, in
            an attempt to minimize the risk of tampering.

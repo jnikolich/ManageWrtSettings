@@ -3,7 +3,7 @@
 #     File Name           :     managewrt.pl
 #     Created By          :     jnikolic
 #     Creation Date       :     2015-02-18 10:25
-#     Last Modified       :     2015-03-08 16:36
+#     Last Modified       :     2015-03-09 11:16
 #     Description         :     Manage 
 #     Description         :     Manages the NVRAM settings on a router running
 #                         :     a "WRT" style of firmware such as DD-WRT.
@@ -495,14 +495,17 @@ sub PushSettingsToRouter
 	my $settinglist	= $_[1];
 
 	my $cmdbuffer = "#!/bin/sh\n";
+	my $cmdoutput;
+	my $resultcode;
+	my $sshcmd;
 
 	my $tmpfilename = MakeTmpfileRemote( $router );
 	exit 255 unless $tmpfilename;
 
+	# Build a command-buffer containing an 'nvram set' command for each of the
+	# settings in the list.  Put an 'nvram commit' at the end.
 	foreach my $settingname ( keys $settinglist )
 	{
-		# Build command and execute it, capturing output and result-code.
-		# bail out of the subroutine if error encountered.
 		my $settingvalue = $settinglist->{$settingname};
 		$settingvalue = PrependLiterals( \$settingvalue );
 
@@ -517,15 +520,18 @@ sub PushSettingsToRouter
 
 		$cmdbuffer .= "nvram set $settingname=\"$settingvalue\"\n";
 	}
-
 	$cmdbuffer .= "nvram commit";
 
-	DebugSay( "[[[[[$cmdbuffer]]]]]" );
-	my $sshcmd = "cat <<-ENDcat | ssh root\@$router -q \'cat >$tmpfilename\'\n$cmdbuffer\nENDcat\n";
-	DebugSay( "**********$sshcmd**********" );
-	my( $cmdoutput, $resultcode );
+	# Push the command-buffer to the target router as a temp-file that will be
+	# subsequently executed as a shell script.
+	$sshcmd = "cat <<-ENDcat | ssh root\@$router -q \'cat >$tmpfilename\'\n$cmdbuffer\nENDcat\n";
 	ExecuteShellCmd( $sshcmd, \$cmdoutput, \$resultcode )
-		or die "Error when running ssh on router $CFG{'router'} (result=$resultcode) $!";
+		or die "Error when running pushing script to router $CFG{'router'} (result=$resultcode) $!";
+
+	# Execute the temp-file shell script on the remote router
+	$sshcmd = "ssh root\@$router -q \'sh $tmpfilename\'";
+	ExecuteShellCmd( $sshcmd, \$cmdoutput, \$resultcode )
+		or die "Error when executing script on router $CFG{'router'} (result=$resultcode) $!";
 
 	return 1;
 }

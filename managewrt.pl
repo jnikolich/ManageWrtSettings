@@ -3,7 +3,7 @@
 #     File Name           :     managewrt.pl
 #     Created By          :     jnikolic
 #     Creation Date       :     2015-02-18 10:25
-#     Last Modified       :     2015-03-09 11:16
+#     Last Modified       :     2015-03-11 00:08
 #     Description         :     Manage 
 #     Description         :     Manages the NVRAM settings on a router running
 #                         :     a "WRT" style of firmware such as DD-WRT.
@@ -288,7 +288,8 @@ sub LoadList
 
 	my $listfilename = "$listdir/$listname";
 
-	open( LISTFILE, $listfilename );
+	open( LISTFILE, $listfilename )
+		or die "Error opening list file \'$listfilename\' $!";
 	my @lines = <LISTFILE>;
 	close( LISTFILE );
 
@@ -692,7 +693,7 @@ sub SetupConfig
 	# config-file when no corresponding setting was provided on the cmd-line.
 	my $cfgfilename;
 	if( defined $TMPCFG{'configfile'} )			{ $cfgfilename = $TMPCFG{'configfile'};	   }
-	elsif( defined  $REALCFG->{'configfile'} )	{ $cfgfilename = $REALCFG->{'configfile'}; }
+	elsif( defined  $REALCFG->{'configfile'} and -f $REALCFG->{'configfile'} )	{ $cfgfilename = $REALCFG->{'configfile'}; }
 	if( defined $cfgfilename )
 	{
 		my $json_data = do{
@@ -712,8 +713,8 @@ sub SetupConfig
 	}
 
 	# Exit if command or any mandatory arguments were omitted
-	pod2usage( "$0: Must specify a valid command as 1st option.\n" ) if( $TMPCFG{'cmd'} eq "invalid" );
 	pod2usage( "$0: Must specify a valid command as 1st option.\n" ) unless defined $TMPCFG{'cmd'};
+	pod2usage( "$0: Must specify a valid command as 1st option.\n" ) if( $TMPCFG{'cmd'} eq "invalid" );
 	pod2usage( "$0: Must specify a listname.\n" )          			 unless defined $TMPCFG{'listname'};
 	pod2usage( "$0: Must specify a router.\n" )            			 unless defined $TMPCFG{'router'};
 

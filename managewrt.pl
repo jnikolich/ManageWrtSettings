@@ -3,7 +3,7 @@
 #     File Name           :     managewrt.pl
 #     Created By          :     jnikolic
 #     Creation Date       :     2015-02-18 10:25
-#     Last Modified       :     2015-03-12 12:20
+#     Last Modified       :     2015-03-12 12:41
 #     Description         :     Manages the NVRAM settings on a router running
 #                         :     a "WRT" style of firmware such as DD-WRT.
 #################################################################################
@@ -62,7 +62,7 @@ my %CFG = (
 ### invocation of this main function (located near the end of this file just
 ### before the POD), and a global config hash.
 ###
-### Args:	@_	= All arguments passed to this program.
+### Args:	@_		= All arguments passed to this program.
 ###
 ### Return:	true	= Completed OK.
 ###
@@ -238,7 +238,6 @@ sub ExecuteShellCmd
 ### Return:	1		= Device reachable and up.
 ###			0		= Device down, not reachable, or unresolvable.
 ###
-###
 ### Exits:	none
 ###
 sub IsDeviceReachable
@@ -246,16 +245,12 @@ sub IsDeviceReachable
 	DebugSay( "Entered " . (caller(0))[3] . " [ @_ ]" );
 
 	my $router	= $_[0];
-	my $pingbin	= '/usr/bin/ping';
 
-	my $pingcmd = "$pingbin -c 1 $router >/dev/null 2>&1";
-	DebugSay( "ping cmd: [$pingcmd]" );
-	my $retval = system( $pingcmd );
-	DebugSay( "system() result: [$retval]" );
-	if( $retval != 0 )
+	my $pingcmd = "/usr/bin/ping -c 1 $router";
+	my ( $cmdoutput, $resultcode );
+	if( ! ExecuteShellCmd( $pingcmd, \$cmdoutput, \$resultcode ) )
 	{
-		$retval = $retval >>8;
-		DebugSay( "Ping failed with code $retval" );
+		warn "Error when pinging router \'$CFG{'router'}\' (result=$resultcode) $!";
 		return 0;
 	}
 	return 1;
@@ -308,7 +303,7 @@ sub LoadList
 ### returns the path/filename of that tempfile.
 ###
 ### Since 'mktemp' appears to be rarely (if ever) present on current dd-wrt
-### builds, the local system's mktemp is used in dry-run mode to create a
+### builds, the local system's mktemp is used in dry-run mode to construct a
 ### filename.  That filename is then created on the remote device.
 ###
 ### Args:	$_[0]	= Name/IP of remote device
@@ -670,7 +665,6 @@ sub SetupConfig
 			$TMPCFG{'cmd'} = "invalid";
 			shift @ARGV;
 		}
-
 	}
 
 	# Read command-line options into temporary config hash.
@@ -691,7 +685,7 @@ sub SetupConfig
 	# config-file is specified, then use it.  Only use each setting from a
 	# config-file when no corresponding setting was provided on the cmd-line.
 	my $cfgfilename;
-	if( defined $TMPCFG{'configfile'} )			{ $cfgfilename = $TMPCFG{'configfile'};	   }
+	if( defined $TMPCFG{'configfile'} )											{ $cfgfilename = $TMPCFG{'configfile'};	   }
 	elsif( defined  $REALCFG->{'configfile'} and -f $REALCFG->{'configfile'} )	{ $cfgfilename = $REALCFG->{'configfile'}; }
 	if( defined $cfgfilename )
 	{

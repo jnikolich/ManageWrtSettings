@@ -3,7 +3,7 @@
 #     File Name           :     managewrt.pl
 #     Created By          :     jnikolic
 #     Creation Date       :     2015-02-18 10:25
-#     Last Modified       :     2015-03-12 12:41
+#     Last Modified       :     2015-03-12 22:58
 #     Description         :     Manages the NVRAM settings on a router running
 #                         :     a "WRT" style of firmware such as DD-WRT.
 #################################################################################
@@ -393,6 +393,7 @@ sub OutputSettings
 ### prepended are:
 ###     			\  (backslash)
 ###     			"  (double quote)
+###     			'  (single quote)
 ###     			$  (dollar-sign)
 ###     			`  (backtick)
 ### 	
@@ -410,6 +411,7 @@ sub PrependLiterals
 
 	$$stringref =~ s/\\/\\\\/g;	# Treat \ characters as literals - MUST BE 1ST
 	$$stringref =~ s/\"/\\\"/g;	# Treat " characters as literals
+	$$stringref =~ s/\'/\\\'/g;	# Treat ' characters as literals
 	$$stringref =~ s/\$/\\\$/g;	# Treat $ characters as literals
 	$$stringref =~ s/\`/\\\`/g;	# Treat ` characters as literals
 
@@ -806,6 +808,7 @@ __END__
         etc.).  The following literals will be prepended by a backslash:
             \  (backslash)
             "  (double quote)
+            '  (single quote)
             $  (dollar-sign)
             `  (backtick)
 

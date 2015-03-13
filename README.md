@@ -1,7 +1,7 @@
 managewrt.pl
 ============
 
-managewrt.pl is a simple Perl-based tool to read, write, view and compare sets (called "lists") of NVRAM settings on routers
+`managewrt.pl` is a simple Perl-based tool to read, write, view and compare sets (called "lists") of NVRAM settings on routers
 running WRT-style firmware such as DD-WRT.  It was originally conceived as a quick way of backing up lists of settings prior
 to upgrading firmware, and then restoring the settings after the upgrade has completed.
 
@@ -18,10 +18,10 @@ The following commands are supported:
 	compare	- Reads the current value(s) of a list of NVRAM settings, and compares them to a saved set of value(s) using
 			  your choice of "diff", "git diff" or "vimdiff".
 
-managewrt.pl can properly handle NVRAM settings that contain such characters as single-quotes, double-quotes, backticks,
+`managewrt.pl` can properly handle NVRAM settings that contain such characters as single-quotes, double-quotes, backticks,
 backslashes and dollar-signs.
 
-managewrt.pl operates on "lists" of settings, which are simply text files listing one or more NVRAM setting names.  Settings
+`managewrt.pl` operates on "lists" of settings, which are simply text files listing one or more NVRAM setting names.  Settings
 can thus be grouped together however it makes sense to do so, and then operated on together all at once.  An example of this
 would be a list of all settings related to SSH-based administration of the router.  Such a text file would look simliar to
 the following:
@@ -40,7 +40,7 @@ sshd_wanport
 With such a list defined, all settings related to SSH administration could be easily saved, viewed, written and compared with
 single commands.  When saved, the resulting data-files are UTF8-encoded JSON files that can be edited by the text editor of
 your choice if desired, before being written back to the router later.  Note that while this can be quite convenient and
-time-saving in many cases, care should always be taken to edit settings correctly, as managewrt.pl will perform exactly zero
+time-saving in many cases, care should always be taken to edit settings correctly, as `managewrt.pl` will perform exactly zero
 syntax / integrity checking on saved settings when writing them back to a router.  An example of such a saved data-file is
 the following:
 
@@ -57,40 +57,40 @@ the following:
 }
 ```
 
-For every list that has been defined, managewrt.pl will save gotten settings on a per-router basis.  I.e. if you have 3 routers
-all with slightly different sshd settings, you can define the list of all sshd settings once, and run managewrt.pl against
+For every list that has been defined, `managewrt.pl` will save gotten settings on a per-router basis.  I.e. if you have 3 routers
+all with slightly different sshd settings, you can define the list of all sshd settings once, and run `managewrt.pl` against
 each of your three routers to capture the individual settings for each router.  Alternatively if you'd like to quickly copy
-lists of settings from one router to another, you can get a list of settings from one router with managewrt.pl, copy the data-
+lists of settings from one router to another, you can get a list of settings from one router with `managewrt.pl`, copy the data-
 file to a new name corresponding to a 2nd router, and then write those settings to the 2nd (and 3rd, etc.) router with
-managewrt.pl .
+`managewrt.pl` .
 
 
 REQUIREMENTS
 ------------
 
-managewrt.pl is implemented as a single perl script.  As such, it requires Perl (5.10.0 or higher) to be present and
-functional on the system where managewrt.pl is to be run.
+`managewrt.pl` is implemented as a single perl script.  As such, it requires Perl (5.10.0 or higher) to be present and
+functional on the system where `managewrt.pl` is to be run.
 
-managewrt.pl depends on a small number of perl modules to properly operate, which may or may not already be present on your
+`managewrt.pl` depends on a small number of perl modules to properly operate, which may or may not already be present on your
 system.  (On the author's Fedora 21 system, all modules were automatically installed with Perl when it was installed.)  At
 present the required modules are:
-	Getopt::Long
-	JSON::PP
-	Pod::Usage
-	File::Temp
-	IO::Handle
+- Getopt::Long
+- JSON::PP
+- Pod::Usage
+- File::Temp
+- IO::Handle
 
-managewrt.pl makes use of a very small number of utilities (e.g. ping, mktemp, cat) typically included in most unix-like
+`managewrt.pl` makes use of a very small number of utilities (e.g. ping, mktemp, cat) typically included in most unix-like
 operating systems such as Linux, BSD, OSX, etc.  It should work similarly on any unix-like operating system that has
 Perl 5.10.0 (or later) installed along with the modules mentioned above.  It has not been tested on Windows, but will
 presumably work in conjunction with something like CygWin (a large collection of GNU and open-source tools along with a
 POSIX API environment).
 
-managewrt.pl communicates with routers via SSH.  This means that: 1) the SSH server must be running on your router(s), and
-2) the ssh client 'ssh' must exist on the system where managewrt.pl is installed to.  It is also highly recommended that
+`managewrt.pl` communicates with routers via SSH.  This means that: 1) the SSH server must be running on your router(s), and
+2) the ssh client 'ssh' must exist on the system where `managewrt.pl` is installed to.  It is also highly recommended that
 key-based SSH logins be configured beforehand.  While not strictly necessary, if public/private SSH keys have not been properly
-installed beforehand then every invocation of managewrt.pl will cause the user to be prompted (often multiple times per command)
+installed beforehand then every invocation of `managewrt.pl` will cause the user to be prompted (often multiple times per command)
 to enter the valid login password for the router.
 
-When performing compare commands, managewrt.pl supports the use of (currently) 3 comparison utilties:  diff, git, and vim.
+When performing compare commands, `managewrt.pl` supports the use of (currently) 3 comparison utilties:  diff, git, and vim.
 Ensure that your choice(s) of these tools are installed beforehand.

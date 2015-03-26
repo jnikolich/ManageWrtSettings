@@ -143,8 +143,12 @@ sshd_wanport
 
 - Set create and deploy SSH public/private keys between your router(s) and the system where you installed `managewrt.pl`.  This is technically an optional step, but if not done then you will be repeatedly prompted to enter passwords whenever you run the script.  One tutorial covering this appears on the DD-WRT wiki:  http://www.dd-wrt.com/wiki/index.php/SSH
 
-- Test your setup with something like the following command (assumes your router is 192.168.1.1):
+- Test your setup with something like the following command (assumes your router is 192.168.1.1). If you get any warnings about missing modules such as `JSON::pp`, `IO::Handle` etc, then refer to the **REQUIREMENTS** section above for a list of required Perl modules.  Install them according to the procedures for your particular OS.
 ```shell
 /opt/ManageWrtSettings-master/managewrt.pl view -l sshd -r 192.168.1.1
 ```
-If you get any warnings about missing modules such as `JSON::pp`, `IO::Handle` etc, then refer to the **REQUIREMENTS** section above for a list of required Perl modules.  Install them according to the procedures for your particular OS.
+
+- Run the following to get additional help on additional commands and options:
+```shell
+/opt/ManageWrtSettings-master/managewrt.pl --help
+```

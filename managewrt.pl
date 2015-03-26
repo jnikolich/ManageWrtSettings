@@ -3,7 +3,7 @@
 #     File Name           :     managewrt.pl
 #     Created By          :     jnikolic
 #     Creation Date       :     2015-02-18 10:25
-#     Last Modified       :     2015-03-13 14:57
+#     Last Modified       :     2015-03-26 13:01
 #     Description         :     Manages the NVRAM settings on a router running
 #                         :     a "WRT" style of firmware such as DD-WRT.
 #################################################################################
@@ -653,6 +653,7 @@ sub SetupConfig
 	if( @ARGV )
 	{
 		my $cmd = $ARGV[0];
+		say "ARGV0=[$cmd]";
 		if( $cmd eq "compare"
 		||	$cmd eq "get"
 		||	$cmd eq "dumpcfg"
@@ -831,16 +832,11 @@ __END__
 =head1 WARNINGS
 
     Note that no attempt is made to obscure/filter out any sensitive settings
-    such as passwords.  Care should be taken when handling such settings.  This
-    script will do the following in an attempt to reduce risk:
+    such as passwords.  Care should be taken when handling such settings.  In
+	order to help prevent you from shooting yourself in the foot too badly,
+	this script will:
 
         1. When getting current settings from a router and saving them to a
            save-file, the file's permissions will be set to 0600 ( -rw------- )
            to prevent access by any user other than the owner and root.
-
-           (NOT YET IMPLEMENTED)
-        2. When accessing a list config-file or a setting save-file, execution
-           will terminate if the file has any non-owner permissions enabled, in
-           an attempt to minimize the risk of tampering.
-
 =cut

@@ -108,28 +108,28 @@ No attempt is made to obscure/filter out any sensitive NVRAM settings such as pa
 INSTALLATION
 ------------
 
-1. Obtain the latest ZIP file containing this release from https://github.com/jnikolich/ManageWrtSettings/archive/master.zip .
+- Obtain the latest ZIP file containing this release from https://github.com/jnikolich/ManageWrtSettings/archive/master.zip .
 
-2. Extract the ZIP file into your desired location.  We will assume `/opt` in these instructions.  Extracting the ZIP file will create a subdirectory called `ManageWrtSettings-master`.  You may rename this subdirectory if you choose.  Later, you may invoke `managewrt.pl` in one of three ways:
-  - By its full path/filename (*e.g. `/opt/ManageWrtSettings-master/managewrt.pl`*),
-  - By first switching into its subdirectory and then running `./managewrt.pl`,
-  - By adding the subdirectory to your `$PATH` environment variable and then running `managewrt.pl` .
+- Extract the ZIP file into your desired location.  We will assume `/opt` in these instructions.  Extracting the ZIP file will create a subdirectory called `ManageWrtSettings-master`.  You may rename this subdirectory if you choose.  Later, you may invoke `managewrt.pl` in one of three ways:
+  1. By its full path/filename (*e.g. `/opt/ManageWrtSettings-master/managewrt.pl`*),
+  2. By first switching into its subdirectory and then running `./managewrt.pl`,
+  3. By adding the subdirectory to your `$PATH` environment variable and then running `managewrt.pl` .
 
 
-3. cd into the installation directory and ensure that the script is accessible only by the owner and root.
+- cd into the installation directory and ensure that the script is accessible only by the owner and root.
 ```shell
 cd /opt/ManageWrtSettings-master
 chmod 0700 managewrt.pl
 ```
 
-4. Create required `data` and `lists` subdirectories.  Make them accessible only by the owner and root.
+- Create required `data` and `lists` subdirectories.  Make them accessible only by the owner and root.
 ```shell
 mkdir -p /opt/ManageWrtSettings-master/data
 mkdir -p /opt/ManageWrtSettings-master/lists
 chmod 0700 /opt/ManageWrtSettings-master/data /opt/ManageWrtSettings-master/lists
 ```
 
-5. Create one or more lists of NVRAM settings.  Each list is a text file located in the `lists` subdirectory, where the filename corresponds to the name of the list.  The following example text file (called `lists/sshd`) defines a list of settings related to the SSHD server:
+- Create one or more lists of NVRAM settings.  Each list is a text file located in the `lists` subdirectory, where the filename corresponds to the name of the list.  The following example text file (called `lists/sshd`) defines a list of settings related to the SSHD server:
 ```shell
 limit_ssh
 remote_mgt_ssh
@@ -141,9 +141,9 @@ sshd_port
 sshd_wanport
 ```
 
-6. Set create and deploy SSH public/private keys between your router(s) and the system where you installed `managewrt.pl`.  This is technically an optional step, but if not done then you will be repeatedly prompted to enter passwords whenever you run the script.  One tutorial covering this appears on the DD-WRT wiki:  http://www.dd-wrt.com/wiki/index.php/SSH
+- Set create and deploy SSH public/private keys between your router(s) and the system where you installed `managewrt.pl`.  This is technically an optional step, but if not done then you will be repeatedly prompted to enter passwords whenever you run the script.  One tutorial covering this appears on the DD-WRT wiki:  http://www.dd-wrt.com/wiki/index.php/SSH
 
-7. Test your setup with something like the following command (assumes your router is 192.168.1.1):
+- Test your setup with something like the following command (assumes your router is 192.168.1.1):
 ```shell
 /opt/ManageWrtSettings-master/managewrt.pl view -l sshd -r 192.168.1.1
 ```

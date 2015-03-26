@@ -48,7 +48,7 @@ the following:
 {
    "limit_ssh" : "0",
    "remote_mgt_ssh" : "0",
-   "sshd_authorized_keys" : "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEA48rmFLbAI+LHc+AM2u/MiKHYrBx4aOJa3XK22qFCHramQteOWRJQWBUvOcrZMENo7kFsbzLhxLbsBnV6PBlPcYbAkomcjMmOLgdO65zBrcCz+TyoxzoylUOKaQ3pDI2cEFjP79Mz7jNxuC6JlzEJxJTLUuknJabVNEaKryzUvwzrip40K5hwAeasqXT2w1xeLgVEDOu54nTJndNA4p8A/KVXN9V0lowK1uLXFBHds5tHp+1grGEQAI8bbz0bB9KoxOEUFyI2V+tXyRS+LPFSXBjNc3ix8BUsOuTelj91pYdB49/sS6rPAtL1iym3FOTrod9cNSUxveaWTykZY0pSVbB7PA3R9QlhsW6Hu+ZhRt591jaXc/qZ7cEYlH1waaXAMl7fatKNSR+ThAXbRHiOV0rWr+d144F/oBOTP8bOAquFX1Gy284bKMLk= root@einstein\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCnUkH4P2H79onbQ/A9C/rdXU8f5NW6MM0ZyRk6SdCnICWWdbJ4J7C+k4OXKJ2mi470YodIuHTqadhjs+QRYwKcFzGn8RXEEwq9letJ1rw/tg9NWa/05EMdZvXhg3wG3KXJ8edGg61xM4jCLGgF9rs/3tfqQEt0XcR6xxD8Zoj6NLlJRqPkbl/hjXjbt+c/avu6b0g4HeTHtTOHE5SEqKIW+6U90497d/UeCZIQOFN84UBtpGFuZMpxGb6PNA7kucVELrrjp0cJHeBgPDHeeMf39cTSOtbVgf5yzFVT8mx5kuuyTcqbAlWQpOxJiQ== root@biblios",
+   "sshd_authorized_keys" : "ssh-rsa AAAAB3NzaCtyc2TESTKEYTESTKEYTESTKEYAI+LHc+AM2u/MiKHYrBx4aOJa3XK22qFCHramQteOWRJQWBUvOcrZMENo7kFsbzLhxLbsBnV6PBlPcYbAkomcjMmOLgdO65zBrcCz+TyoxzoylUOKaQ3pDI2cEFjP79Mz7jNxuC6JlzEJxJTLUuknJabVNEaKryzUvwzrip40K5hwAeasqXT2w1xeLgVEDOu54nTJndNA4p8A/KVXN9V0lowK1uLXFBHds5tHp+1grGEQAI8bbz0bB9KoxOEUFyI2V+tXyRS+LPFSXBjNc3ix8BUsOuTelj91pYdB49/sS6rPAtL1iym3FOTrod9cNSUxveaWTykZY0pSVbB7PA3R9QlhsW6Hu+ZhRt591jaXc/qZ7cEYlH1waaXAMl7fatKNSR+ThAXbRHiOV0rWr+d144F/oBOTP8bOAquFX1Gy284bKMLk= root@einstein\nssh-rsa AAAAB3NzaCTESTKEYTESTKEYTESTKEYnUkH4P2H79onbQ/A9C/rdXU8f5NW6MM0ZyRk6SdCnICWWdbJ4J7C+k4OXKJ2mi470YodIuHTqadhjs+QRYwKcFzGn8RXEEwq9letJ1rw/tg9NWa/05EMdZvXhg3wG3KXJ8edGg61xM4jCLGgF9rs/3tfqQEt0XcR6xxD8Zoj6NLlJRqPkbl/hjXjbt+c/avu6b0g4HeTHtTOHE5SEqKIW+6U90497d/UeCZIQOFN84UBtpGFuZMpxGb6PNA7kucVELrrjp0cJHeBgPDHeeMf39cTSOtbVgf5yzFVT8mx5kuuyTcqbAlWQpOxJiQ== root@biblios",
    "sshd_enable" : "1",
    "sshd_forwarding" : "0",
    "sshd_passwd_auth" : "1",
@@ -96,7 +96,55 @@ When performing compare commands, `managewrt.pl` supports the use of (currently)
 Ensure that your choice(s) of these tools are installed beforehand.
 
 
+WARNINGS
+--------
+The names of NVRAM settings and the inter-relationships between them may occasionally change from one firmware version to another.  Firmware developers almost-certainly will not do this casually, but it will happen occasionally.  Care should always be taken when writing settings to routers to first ensure that setting names / relationships have not changed.  One indicator that this might be the case is when something is mentioned in support forums similar to *a factory-reset to default settings is required after upgrading to this firmware*.
+
+No attempt is made to obscure/filter out any sensitive NVRAM settings such as passwords.  Care should always be taken when handling such settings.  In order to help prevent you from shooting yourself in the foot too badly, this script will:
+
+1. When getting current settings from a router and saving them to a save-file, the file's permissions will be set to 0600 ( -rw------- ) to prevent access by any user other than the current owner and root.
+
+
 INSTALLATION
 ------------
 
-1. Obtain the latest ZIP file containing this release from https://github.com/jnikolich/ManageWrtSettings/archive/master.zip
+1. Obtain the latest ZIP file containing this release from https://github.com/jnikolich/ManageWrtSettings/archive/master.zip .
+
+2. Extract the ZIP file into your desired location.  We will assume `/opt` in these instructions.  Extracting the ZIP file will create a subdirectory called `ManageWrtSettings-master`.  You may rename this subdirectory if you choose.  Later, you may invoke `managewrt.pl` in one of three ways:
+  - By its full path/filename (*e.g. `/opt/ManageWrtSettings-master/managewrt.pl`*),
+  - By first switching into its subdirectory and then running `./managewrt.pl`,
+  - By adding the subdirectory to your `%PATH` environment variable and then running `managewrt.pl` .
+
+
+3. cd into the installation directory and ensure that the script is accessible only by the owner and root.
+```shell
+cd /opt/ManageWrtSettings-master
+chmod 0700 managewrt.pl
+```
+
+4. Create required `data` and `lists` subdirectories.  Make them accessible only by the owner and root.
+```shell
+mkdir -p /opt/ManageWrtSettings-master/data
+mkdir -p /opt/ManageWrtSettings-master/lists
+chmod 0700 /opt/ManageWrtSettings-master/data /opt/ManageWrtSettings-master/lists
+```
+
+5. Create one or more lists of NVRAM settings.  Each list is a text file located in the `lists` subdirectory, where the filename corresponds to the name of the list.  The following example text file (called `lists/sshd`) defines a list of settings related to the SSHD server:
+```shell
+limit_ssh
+remote_mgt_ssh
+sshd_authorized_keys
+sshd_enable                
+sshd_forwarding
+sshd_passwd_auth            
+sshd_port     
+sshd_wanport
+```
+
+6. Set create and deploy SSH public/private keys between your router(s) and the system where you installed `managewrt.pl`.  This is technically an optional step, but if not done then you will be repeatedly prompted to enter passwords whenever you run the script.  One tutorial covering this appears on the DD-WRT wiki:  http://www.dd-wrt.com/wiki/index.php/SSH
+
+7. Test your setup with something like the following command (assumes your router is 192.168.1.1):
+```shell
+/opt/ManageWrtSettings-master/managewrt.pl view -l sshd -r 192.168.1.1
+```
+If you get any warnings about missing modules such as `JSON::pp`, `IO::Handle` etc, then refer to the **REQUIREMENTS** section above for a list of required Perl modules.  Install them according to the procedures for your particular OS.

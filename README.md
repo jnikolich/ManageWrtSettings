@@ -94,3 +94,9 @@ to enter the valid login password for the router.
 
 When performing compare commands, `managewrt.pl` supports the use of (currently) 3 comparison utilties:  diff, git, and vim.
 Ensure that your choice(s) of these tools are installed beforehand.
+
+
+INSTALLATION
+------------
+
+1. Obtain the latest ZIP file containing this release from https://github.com/jnikolich/ManageWrtSettings/archive/master.zip

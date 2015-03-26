@@ -113,7 +113,7 @@ INSTALLATION
 2. Extract the ZIP file into your desired location.  We will assume `/opt` in these instructions.  Extracting the ZIP file will create a subdirectory called `ManageWrtSettings-master`.  You may rename this subdirectory if you choose.  Later, you may invoke `managewrt.pl` in one of three ways:
   - By its full path/filename (*e.g. `/opt/ManageWrtSettings-master/managewrt.pl`*),
   - By first switching into its subdirectory and then running `./managewrt.pl`,
-  - By adding the subdirectory to your `%PATH` environment variable and then running `managewrt.pl` .
+  - By adding the subdirectory to your `$PATH` environment variable and then running `managewrt.pl` .
 
 
 3. cd into the installation directory and ensure that the script is accessible only by the owner and root.

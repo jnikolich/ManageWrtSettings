@@ -3,7 +3,7 @@
 #     File Name           :     managewrt.pl
 #     Created By          :     jnikolic
 #     Creation Date       :     2015-02-18 10:25
-#     Last Modified       :     2015-03-12 22:58
+#     Last Modified       :     2015-03-13 14:57
 #     Description         :     Manages the NVRAM settings on a router running
 #                         :     a "WRT" style of firmware such as DD-WRT.
 #################################################################################
@@ -196,12 +196,12 @@ sub DebugSay
 
 ### ExecuteShellCmd()
 ###
-### Execute the provided command string via a system() call, putting any
+### Execute the provided command string via a qx call, putting any
 ### resulting output (both stdout and stderr) into the output string provided
-### by-reference.  The result-code of the system() call is returned via
+### by-reference.  The result-code of the executed command is returned via
 ### reference to the caller.
 ###
-### Args:	$_[0]	= Command string to be executed via system(0 call.
+### Args:	$_[0]	= Command string to be executed via qx call.
 ###			$_[2]	= Reference to string that will contain any output.
 ###			$_[3]	= Reference to scalar that will contain the result-code
 ###                   of the command's execution..
@@ -665,7 +665,7 @@ sub SetupConfig
 		else
 		{
 			$TMPCFG{'cmd'} = "invalid";
-			shift @ARGV;
+			#shift @ARGV;
 		}
 	}
 

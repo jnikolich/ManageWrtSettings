@@ -3,7 +3,7 @@
 #     File Name           :     managewrt.pl
 #     Created By          :     jnikolic
 #     Creation Date       :     2015-02-18 10:25
-#     Last Modified       :     2015-03-26 13:01
+#     Last Modified       :     2015-03-26 13:24
 #     Description         :     Manages the NVRAM settings on a router running
 #                         :     a "WRT" style of firmware such as DD-WRT.
 #################################################################################
@@ -610,7 +610,7 @@ sub SaveSettingsToSaveFile
 		or die "Could not open savefile '$savefilename' $!";
 	print( $LISTFILE JSON::PP->new->utf8->canonical->pretty->encode( $settinglist ) );
 	close( $LISTFILE );
-	my $mode = 0600; chmod( 0600, $savefilename );
+	chmod( 0600, $savefilename );
 	return 1;
 }
 

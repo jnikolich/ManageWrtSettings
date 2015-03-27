@@ -3,7 +3,7 @@
 #     File Name           :     managewrt.pl
 #     Created By          :     jnikolic
 #     Creation Date       :     2015-02-18 10:25
-#     Last Modified       :     2015-03-26 22:42
+#     Last Modified       :     2015-03-26 22:51
 #     Description         :     Manages the NVRAM settings on a router running
 #                         :     a "WRT" style of firmware such as DD-WRT.
 #################################################################################
@@ -653,7 +653,6 @@ sub SetupConfig
 	if( @ARGV )
 	{
 		my $cmd = $ARGV[0];
-		say "ARGV0=[$cmd]";
 		if( $cmd eq "compare"
 		||	$cmd eq "get"
 		||	$cmd eq "dumpcfg"
@@ -666,7 +665,6 @@ sub SetupConfig
 		else
 		{
 			$TMPCFG{'cmd'} = "invalid";
-			#shift @ARGV;
 		}
 	}
 

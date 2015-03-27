@@ -3,7 +3,7 @@
 #     File Name           :     managewrt.pl
 #     Created By          :     jnikolic
 #     Creation Date       :     2015-02-18 10:25
-#     Last Modified       :     2015-03-26 13:24
+#     Last Modified       :     2015-03-26 22:42
 #     Description         :     Manages the NVRAM settings on a router running
 #                         :     a "WRT" style of firmware such as DD-WRT.
 #################################################################################
@@ -741,55 +741,55 @@ __END__
 
 =head1 NAME
 
-    managewrt.pl - Manage nvram settings on a "WRT" style router.
+managewrt.pl - Manage nvram settings on a "WRT" style router.
 
 =head1 SYNOPSIS
 
-    managewrt.pl <CMD> -r <router> -l <listname> [option...]
+managewrt.pl <CMD> -r <router> -l <listname> [option...]
 
-		where <CMD> is one of:  compare, view, get, set, dumpcfg
+    where <CMD> is one of:  compare, view, get, set, dumpcfg
 
-    managewrt.pl --help or -h for help
+managewrt.pl --help or -h for help
 
 =head1 DESCRIPTION
 
-    Manage the nvram settings on a router running a "WRT" style of firmware such
-    as DD-WRT.  Settings are grouped together into lists and operated on
-    together.  Lists are configured via drop-in list files.
+Manage the nvram settings on a router running a "WRT" style of firmware such as
+DD-WRT.  Settings are grouped together into lists and operated on together.i
+Lists are configured via drop-in list files.
 
-    This script utilizes SSH to interact with the router.  It is recommended
-    that SSH public keys be set up between the system running this script and
-    the router beforehand, otherwise use of the script will likely result in
-    password prompts being constantly displayed.
+This script utilizes SSH to interact with the router.  It is recommended that
+SSH public keys be set up between the system running this script and the router
+beforehand, otherwise use of the script will likely result in password prompts
+being constantly displayed.
 
-    If a configuration file is specified, or if the default configuration file
-    /etc/managewrt.conf is present, then settings will be taken from there.
-    These settings override default settings, but are themselves overriden by
-    anything specified on the command-line.
+If a configuration file is specified, or if the default configuration file
+/etc/managewrt.conf is present, then settings will be taken from there.  These
+settings override default settings, but are themselves overriden by anything
+specified on the command-line.
 
 =head1 OPTIONS
 
 =head2 Command
 
-    The first argument must be one of the following commands to perform:
+The first argument must be one of the following commands to perform:
 
-        compare  Retrieve a list of settings from the router and compare them
-                 with the last recorded values.
+    compare  Retrieve a list of settings from the router and compare them with
+             the last recorded values.
 
-        view     Retrieve a list of settings from the router and display them
-                 to standard-output.
+    view     Retrieve a list of settings from the router and display them to
+             standard-output.
 
-        get      Retrieve a list of settings from the router and save them to
-                 a local savefile.
+    get      Retrieve a list of settings from the router and save them to a
+             local savefile.
 
-        set      Load a list of settings from the most recent savefile for that
-                 list and write/commit them to the router.
+    set      Load a list of settings from the most recent savefile for that
+             list and write/commit them to the router.
 
-        dumpcfg  Performs no operations on the router.  Instead, displays the
-				 current configuration (including any default parameters and
-				 command-line arguments).  The output is in a format that can
-				 be redirected to a file and subsequently used as a config-file
-				 with the --config <filename> option.
+    dumpcfg  Performs no operations on the router.  Instead, displays the
+             current configuration (including any default parameters and
+             command-line arguments).  The output is in a format that can be
+             redirected to a file and subsequently used as a config-file with
+             the --config <filename> option.
 
 =head2 Mandatory Arguments
 
@@ -798,8 +798,8 @@ __END__
         or a resolvable hostname.
 
     --list=<listname>  or -l <listname>
-        Specify the name of the list of settings to operate on.  <listname> must
-        correspond to a drop-in configuration file that has been set up.
+        Specify the name of the list of settings to operate on.  <listname>
+        must correspond to a drop-in configuration file that has been set up.
 
 =head2 Optional Arguments
 
@@ -822,21 +822,23 @@ __END__
 
     --outputcompare=<diff|vim|git>  or -o <diff|vim|git>
         Specify the output method when performing a 'compare' operation.
-        'diff'    - Use external 'diff' command to produce comparison output.
-        'vim'     - Use vim in 'vimdiff' mode to produce comparison output.
-        'git'     - Use 'git diff' to produce (possibly colorized) output.
+            'diff'  - Use external 'diff' command to produce comparison output.
+            'vim'   - Use vim in 'vimdiff' mode to produce comparison output.
+            'git'   - Use 'git diff' to produce (possibly colorized) output.
 
     --help  or  -h
         Displays the help page for this script.
 
 =head1 WARNINGS
 
-    Note that no attempt is made to obscure/filter out any sensitive settings
-    such as passwords.  Care should be taken when handling such settings.  In
-	order to help prevent you from shooting yourself in the foot too badly,
-	this script will:
+Note that no attempt is made to obscure/filter out any sensitive settings such
+as passwords.  Care should be taken when handling such settings.  In order to
+help prevent you from shooting yourself in the foot too badly, this script
+will:
 
-        1. When getting current settings from a router and saving them to a
-           save-file, the file's permissions will be set to 0600 ( -rw------- )
-           to prevent access by any user other than the owner and root.
+    1. When getting current settings from a router and saving them to a
+       save-file, the file's permissions will be set to 0600 ( -rw------- )
+       to prevent access by any user other than the owner and root.
+
 =cut
+
